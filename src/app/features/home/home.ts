@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/security/auth.service';
 import { TenantContext } from '../../services/signals/tenant-context.signal';
 import { UserSignal } from '../../services/signals/user.signal';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe],
+  imports: [ButtonModule, DatePipe],
   template: `
     <div class="flex h-screen bg-surface">
       <!-- Sidebar -->
@@ -63,13 +64,15 @@ import { UserSignal } from '../../services/signals/user.signal';
             <span class="text-sm text-content-muted">{{
               userSignal.user()?.username || 'User'
             }}</span>
-            <button
+            <p-button
               type="button"
-              class="text-sm font-medium text-primary-700 hover:text-primary-900"
+              label="Sign Out"
+              size="small"
+              severity="primary"
+              icon="pi pi-sign-out"
+              styleClass="sign-out-button"
               (click)="logout()"
-            >
-              Sign out
-            </button>
+            />
           </div>
         </header>
 
