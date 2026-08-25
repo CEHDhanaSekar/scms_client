@@ -197,7 +197,7 @@ import { TenantContext } from '../../services/signals/tenant-context.signal';
                 <div>
                   <button
                     type="submit"
-                    [disabled]="loginForm.invalid || isLoading"
+                    [disabled]="loginForm.invalid || isLoading()"
                     class="w-full flex justify-center items-center py-2.5 px-4 rounded font-medium
                     text-sm text-white bg-primary hover:bg-primary-600 active:bg-primary-800
                     disabled:opacity-60 disabled:cursor-not-allowed button-shadow focus:outline-none
