@@ -1,15 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/security/auth.service';
 import { TenantContext } from '../../services/signals/tenant-context.signal';
 import { UserSignal } from '../../services/signals/user.signal';
 import { ButtonModule } from 'primeng/button';
+import { MENU_CONFIG } from '../../library/constants/menu.constants';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-dashboard',
   standalone: true,
-  imports: [ButtonModule, DatePipe],
+  imports: [ButtonModule, DatePipe, RouterLink, RouterLinkActive],
   template: `
     <div class="flex h-screen bg-surface">
       <!-- Sidebar -->
@@ -18,37 +19,46 @@ import { ButtonModule } from 'primeng/button';
           {{ tenantContext.tenant()?.name || 'Smart Clinic Management System' }}
         </div>
         <nav class="flex-1 overflow-y-auto py-4">
-          <p class="px-6 text-xs uppercase tracking-wide text-primary-200 mb-2">Overview</p>
-          <a class="flex items-center gap-3 px-6 py-2.5 bg-white/10 rounded-none hover:bg-white/10">
-            <i class="pi pi-home"></i> Dashboard
-          </a>
-
-          <p class="px-6 mt-6 text-xs uppercase tracking-wide text-primary-200 mb-2">Clinical</p>
-          <a class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10">
-            <i class="pi pi-user"></i> Patients
-          </a>
-          <a class="flex items-center gap-3 px-6 py-2.5 opacity-50 cursor-not-allowed">
-            <i class="pi pi-calendar"></i> Appointments
-            <span class="ml-auto text-[10px] bg-secondary-500 px-2 py-0.5 rounded-full">Soon</span>
-          </a>
-
-          <p class="px-6 mt-6 text-xs uppercase tracking-wide text-primary-200 mb-2">
-            Administration
-          </p>
-          <a class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10">
-            <i class="pi pi-briefcase"></i> Employees
-          </a>
-          <a class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10">
-            <i class="pi pi-sitemap"></i> Departments
-          </a>
-
-          <p class="px-6 mt-6 text-xs uppercase tracking-wide text-primary-200 mb-2">Security</p>
-          <a class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10">
-            <i class="pi pi-shield"></i> Roles &amp; Permissions
-          </a>
-          <a class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10">
-            <i class="pi pi-users"></i> Users
-          </a>
+          @for (menuItem of menuConfig; track menuItem.label) {
+            @if (menuItem.children?.length) {
+              <p class="px-6 mt-6 text-xs uppercase tracking-wide text-primary-200 mb-2">
+                {{ menuItem.label }}
+              </p>
+              @for (child of menuItem.children; track child.label) {
+                @if (child.route && !child.comingSoon) {
+                  <a
+                    [routerLink]="child.route"
+                    routerLinkActive="bg-white/10"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10"
+                  >
+                    <i [class]="child.icon"></i>
+                    {{ child.label }}
+                  </a>
+                } @else {
+                  <div class="flex items-center gap-3 px-6 py-2.5 opacity-50 cursor-not-allowed">
+                    <i [class]="child.icon"></i>
+                    {{ child.label }}
+                    @if (child.comingSoon) {
+                      <span class="ml-auto text-[10px] bg-secondary-500 px-2 py-0.5 rounded-full"
+                        >Soon</span
+                      >
+                    }
+                  </div>
+                }
+              }
+            } @else if (menuItem.route && !menuItem.comingSoon) {
+              <a
+                [routerLink]="menuItem.route"
+                routerLinkActive="bg-white/10"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="flex items-center gap-3 px-6 py-2.5 hover:bg-white/10"
+              >
+                <i [class]="menuItem.icon"></i>
+                {{ menuItem.label }}
+              </a>
+            }
+          }
         </nav>
       </aside>
 
@@ -129,12 +139,13 @@ import { ButtonModule } from 'primeng/button';
     </div>
   `,
 })
-export class HomeComponent {
+export class DashboardComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
   readonly tenantContext = inject(TenantContext);
   readonly userSignal = inject(UserSignal);
+  readonly menuConfig = MENU_CONFIG;
   readonly today = new Date();
 
   logout(): void {

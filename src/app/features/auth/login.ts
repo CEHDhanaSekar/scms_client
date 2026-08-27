@@ -311,7 +311,7 @@ export class LoginComponent {
       .subscribe({
         next: (result) => {
           if (result.success) {
-            this.router.navigate(['/home']);
+            this.router.navigate(['/dashboard']);
             return;
           }
           alert(result.message);
