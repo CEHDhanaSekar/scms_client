@@ -23,3 +23,15 @@ export interface TenantAuthResponseDto {
   refreshToken: string;
   user: UserDto;
 }
+
+export interface UserPermissionDto {
+  id: string; // Guid
+  code: string; // e.g. "patients.create"
+  description: string | null;
+  roleName: string; // role that granted this permission
+}
+
+export interface UserPermissionsResponseDto {
+  userId: string; // Guid
+  permissions: UserPermissionDto[];
+}
