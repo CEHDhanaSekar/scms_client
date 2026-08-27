@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthApiService } from '../../library/api/auth-api.service';
@@ -10,10 +10,9 @@ const AUTH_FREE_ROUTES = ['/v1/auth/login', '/v1/auth/refresh-token'];
 const TENANT_RESOLVE_ROUTE = '/resolve';
 
 export const customHttpInterceptor: HttpInterceptorFn = (req, next) => {
-  const authApiService = inject(AuthApiService);
   const userSignal = inject(UserSignal);
   const tenantContext = inject(TenantContext);
-  const router = inject(Router);
+  const injector = inject(Injector);
 
   const shouldSkipAuth = AUTH_FREE_ROUTES.some((route) => req.url.includes(route));
   const shouldSkipTenant = req.url.toLowerCase().includes(TENANT_RESOLVE_ROUTE);
@@ -35,45 +34,48 @@ export const customHttpInterceptor: HttpInterceptorFn = (req, next) => {
 
     if (!refreshToken) {
       userSignal.clearSession();
-      router.navigate(['/login']);
+      redirectToLogin(injector);
       return throwError(
         () => new HttpErrorResponse({ status: 401, statusText: 'Session expired' }),
       );
     }
 
-    return authApiService.refreshToken({ refreshToken }).pipe(
-      switchMap((response) => {
-        if (response?.success && response.data) {
-          userSignal.setSession(response.data);
+    return injector
+      .get(AuthApiService)
+      .refreshToken({ refreshToken })
+      .pipe(
+        switchMap((response) => {
+          if (response?.success && response.data) {
+            userSignal.setSession(response.data);
 
-          const authReq = req.clone({
-            setHeaders: {
-              ...headers,
-              Authorization: `Bearer ${response.data.accessToken}`,
-            },
-          });
+            const authReq = req.clone({
+              setHeaders: {
+                ...headers,
+                Authorization: `Bearer ${response.data.accessToken}`,
+              },
+            });
 
-          return next(authReq);
-        }
+            return next(authReq);
+          }
 
-        userSignal.clearSession();
-        router.navigate(['/login']);
-        return throwError(
-          () =>
-            new HttpErrorResponse({
-              status: 401,
-              statusText: response?.message || 'Session expired',
-            }),
-        );
-      }),
-      catchError(() => {
-        userSignal.clearSession();
-        router.navigate(['/login']);
-        return throwError(
-          () => new HttpErrorResponse({ status: 401, statusText: 'Session expired' }),
-        );
-      }),
-    );
+          userSignal.clearSession();
+          redirectToLogin(injector);
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: response?.message || 'Session expired',
+              }),
+          );
+        }),
+        catchError(() => {
+          userSignal.clearSession();
+          redirectToLogin(injector);
+          return throwError(
+            () => new HttpErrorResponse({ status: 401, statusText: 'Session expired' }),
+          );
+        }),
+      );
   }
 
   const authReq = req.clone({
@@ -85,6 +87,10 @@ export const customHttpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq);
 };
+
+function redirectToLogin(injector: Injector): void {
+  injector.get(Router).navigate(['/login']);
+}
 
 function isAccessTokenExpired(expiredAt: string): boolean {
   if (!expiredAt) {
