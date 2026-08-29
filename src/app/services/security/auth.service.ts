@@ -13,6 +13,7 @@ import { TenantResolveDto } from '../../library/models/tenant.model';
 import { StorageService } from '../common/storage.service';
 import { TenantContext } from '../signals/tenant-context.signal';
 import { UserSignal } from '../signals/user.signal';
+import { PermissionService } from './permission.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,7 @@ export class AuthService {
   private readonly storage = inject(StorageService);
   private readonly tenantContext = inject(TenantContext);
   private readonly userSignal = inject(UserSignal);
+  private readonly permissionService = inject(PermissionService);
 
   private readonly tenantStorageKey = 'scms.tenant';
 
@@ -102,5 +104,6 @@ export class AuthService {
   private clearAuthState(): void {
     this.storage.clear();
     this.userSignal.clearSession();
+    this.permissionService.clear();
   }
 }

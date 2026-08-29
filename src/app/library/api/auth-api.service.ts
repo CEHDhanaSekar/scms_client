@@ -7,6 +7,7 @@ import {
   TenantRefreshTokenRequestDto,
   TenantLogoutRequestDto,
   TenantAuthResponseDto,
+  UserPermissionsResponseDto,
 } from '../models/auth.model';
 import { ApiResponse } from '../models/common.model';
 import { TenantResolveDto } from '../models/tenant.model';
@@ -31,5 +32,9 @@ export class AuthApiService {
 
   refreshToken(req: TenantRefreshTokenRequestDto): Observable<ApiResponse<TenantAuthResponseDto>> {
     return this.httpService.postData(environment.serverUrlV1, 'auth/refresh-token', req);
+  }
+
+  getUserPermissions(userId: string): Observable<ApiResponse<UserPermissionsResponseDto>> {
+    return this.httpService.getData(environment.serverUrlV1, `User/${userId}/permissions`);
   }
 }

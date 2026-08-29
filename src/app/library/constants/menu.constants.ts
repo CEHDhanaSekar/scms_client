@@ -17,17 +17,23 @@ export const MENU_CONFIG: MenuItem[] = [
       { label: 'Registration', icon: 'pi pi-id-card', route: '/visits', permission: 'VISIT_READ' },
       {
         label: 'Consultations',
-        icon: 'pi pi-stethoscope',
+        icon: 'pi pi-heart',
         route: '/consultations',
         permission: 'CONSULTATION_READ',
       },
       {
         label: 'Admissions',
-        icon: 'pi pi-bed',
+        icon: 'pi pi-home',
         route: '/admissions',
         permission: 'ADMISSION_READ',
       },
       { label: 'Billing', icon: 'pi pi-wallet', route: '/billing', permission: 'BILLING_READ' },
+      {
+        label: 'Appointments',
+        icon: 'pi pi-calendar',
+        route: '/appointments',
+        permission: 'APPOINTMENTS_READ',
+      },
     ],
   },
   {

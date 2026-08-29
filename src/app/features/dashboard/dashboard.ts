@@ -1,11 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/security/auth.service';
 import { TenantContext } from '../../services/signals/tenant-context.signal';
 import { UserSignal } from '../../services/signals/user.signal';
 import { ButtonModule } from 'primeng/button';
-import { MENU_CONFIG } from '../../library/constants/menu.constants';
+import { AuthApiService } from '../../library/api/auth-api.service';
+import { MenuService } from '../../services/security/menu.service';
+import { PermissionService } from '../../services/security/permission.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +21,7 @@ import { MENU_CONFIG } from '../../library/constants/menu.constants';
           {{ tenantContext.tenant()?.name || 'Smart Clinic Management System' }}
         </div>
         <nav class="flex-1 overflow-y-auto py-4">
-          @for (menuItem of menuConfig; track menuItem.label) {
+          @for (menuItem of menuConfig(); track menuItem.label) {
             @if (menuItem.children?.length) {
               <p class="px-6 mt-6 text-xs uppercase tracking-wide text-primary-200 mb-2">
                 {{ menuItem.label }}
@@ -139,14 +141,32 @@ import { MENU_CONFIG } from '../../library/constants/menu.constants';
     </div>
   `,
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly authApi = inject(AuthApiService);
 
   readonly tenantContext = inject(TenantContext);
   readonly userSignal = inject(UserSignal);
-  readonly menuConfig = MENU_CONFIG;
+  readonly menuConfig = inject(MenuService).menu;
   readonly today = new Date();
+
+  private readonly permissionService = inject(PermissionService);
+
+  ngOnInit(): void {
+    const userId = this.userSignal.user()?.id ?? '';
+    if (!userId) {
+      return;
+    }
+
+    this.authApi.getUserPermissions(userId).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.permissionService.setPermissions(res.data);
+        }
+      },
+    });
+  }
 
   logout(): void {
     this.authService.logout().subscribe({
