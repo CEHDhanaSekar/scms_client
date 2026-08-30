@@ -1,5 +1,10 @@
 import { BaseDto } from './common.model';
 
+export interface UserRoleInfoDto {
+  id: string; // Guid
+  name: string;
+}
+
 export interface UserDto extends BaseDto {
   username: string;
   email: string;
@@ -7,6 +12,7 @@ export interface UserDto extends BaseDto {
   employeeId: string | null; // Guid?
   isDeleted: boolean;
   roleIds: string[]; // List<Guid>
+  roles: UserRoleInfoDto[];
 }
 
 export interface CreateUserDto {

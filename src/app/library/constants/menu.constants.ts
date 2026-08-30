@@ -14,7 +14,12 @@ export const MENU_CONFIG: MenuItem[] = [
     label: 'Clinical',
     icon: 'pi pi-heart',
     children: [
-      { label: 'Registration', icon: 'pi pi-id-card', route: '/visits', permission: 'VISIT_READ' },
+      {
+        label: 'Registration',
+        icon: 'pi pi-id-card',
+        route: '/registration',
+        permission: 'REGISTRATION_READ',
+      },
       {
         label: 'Consultations',
         icon: 'pi pi-heart',
@@ -59,7 +64,7 @@ export const MENU_CONFIG: MenuItem[] = [
     label: 'Security',
     icon: 'pi pi-shield',
     children: [
-      { label: 'Roles', icon: 'pi pi-key', route: '/roles', permission: 'ROLE_READ', comingSoon: true },
+      { label: 'Roles', icon: 'pi pi-key', route: '/roles', permission: 'ROLE_READ' },
       { label: 'Users', icon: 'pi pi-users', route: '/users', permission: 'USER_READ' },
     ],
   },
