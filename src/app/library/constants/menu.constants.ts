@@ -32,7 +32,7 @@ export const MENU_CONFIG: MenuItem[] = [
         label: 'Appointments',
         icon: 'pi pi-calendar',
         route: '/appointments',
-        permission: 'APPOINTMENTS_READ',
+        permission: 'APPOINTMENT_READ',
       },
     ],
   },
@@ -59,7 +59,7 @@ export const MENU_CONFIG: MenuItem[] = [
     label: 'Security',
     icon: 'pi pi-shield',
     children: [
-      { label: 'Roles', icon: 'pi pi-key', route: '/roles', permission: 'ROLE_READ' },
+      { label: 'Roles', icon: 'pi pi-key', route: '/roles', permission: 'ROLE_READ', comingSoon: true },
       { label: 'Users', icon: 'pi pi-users', route: '/users', permission: 'USER_READ' },
     ],
   },

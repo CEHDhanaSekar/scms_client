@@ -5,7 +5,7 @@ export interface ApiResponse<T> {
   data?: T;
 }
 
-export interface BaseModel {
+export interface BaseDto {
   id: string;
   isActive: boolean;
 }

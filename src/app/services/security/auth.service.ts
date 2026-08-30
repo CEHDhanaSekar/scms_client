@@ -28,18 +28,22 @@ export class AuthService {
   private readonly tenantStorageKey = 'scms.tenant';
 
   initialize(): Observable<ApiResponse<TenantResolveDto> | null> {
-    this.restoreState();
+    const isRestored = this.restoreState();
 
-    return this.authApi.tenantResolve().pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          this.tenantContext.setTenant(response.data);
-          this.storage.setItem(this.tenantStorageKey, response.data, 'local');
-          this.storage.setItem(this.tenantStorageKey, response.data, 'session');
-        }
-      }),
-      catchError(() => of(null)),
-    );
+    if (!isRestored) {
+      return this.authApi.tenantResolve().pipe(
+        tap((response) => {
+          if (response.success && response.data) {
+            this.tenantContext.setTenant(response.data);
+            this.storage.setItem(this.tenantStorageKey, response.data, 'local');
+            this.storage.setItem(this.tenantStorageKey, response.data, 'session');
+          }
+        }),
+        catchError(() => of(null)),
+      );
+    } else {
+      return of(null);
+    }
   }
 
   login(request: TenantLoginRequestDto): Observable<ApiResponse<TenantAuthResponseDto>> {
@@ -91,13 +95,16 @@ export class AuthService {
     return this.userSignal.accessToken();
   }
 
-  private restoreState(): void {
+  private restoreState(): boolean {
     const tenant =
       this.storage.getItem<TenantResolveDto>(this.tenantStorageKey, 'local') ??
       this.storage.getItem<TenantResolveDto>(this.tenantStorageKey, 'session');
     if (tenant) {
       this.tenantContext.setTenant(tenant);
       this.storage.setItem(this.tenantStorageKey, tenant, 'session');
+      return true;
+    } else {
+      return false;
     }
   }
 

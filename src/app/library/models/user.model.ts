@@ -1,8 +1,8 @@
-export interface UserDto {
-  id: string; // Guid
+import { BaseDto } from './common.model';
+
+export interface UserDto extends BaseDto {
   username: string;
   email: string;
-  isActive: boolean;
   lastLoginAt: string | null; // DateTime?
   employeeId: string | null; // Guid?
   isDeleted: boolean;
@@ -17,11 +17,10 @@ export interface CreateUserDto {
   roleIds: string[]; // List<Guid>
 }
 
-export interface UpdateUserDto {
-  id: string; // Guid
+export interface UpdateUserDto extends BaseDto {
   username: string;
   email: string;
-  isActive: boolean;
   employeeId: string | null; // Guid?
   roleIds: string[]; // List<Guid>
+  isActive: boolean;
 }
