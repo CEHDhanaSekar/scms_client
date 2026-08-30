@@ -6,23 +6,22 @@ import { faLock, faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../services/security/auth.service';
 import { TenantContext } from '../../services/signals/tenant-context.signal';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, FontAwesomeModule],
   template: `
-    <main class="min-h-screen bg-surface flex flex-col">
+    <main class="login-container min-h-screen flex flex-col">
       <!-- Login Content -->
       <div class="flex-1 flex items-center justify-center p-4 md:p-6">
         <!-- Split Login Card -->
-        <div
-          class="w-full max-w-6xl mx-auto flex overflow-hidden rounded-xl login-card-shadow bg-white"
-        >
+        <div class="w-full max-w-6xl mx-auto flex overflow-hidden rounded-xl login-card-shadow">
           <!-- ============================================
            LEFT SIDE
       ============================================= -->
-          <div class="hidden md:block md:w-1/2 relative bg-surface-container min-h-150">
+          <div class="hidden md:block md:w-1/2 relative bg-surface-container">
             <!-- Background Image -->
             <div
               class="absolute inset-0 bg-cover bg-center"
@@ -33,21 +32,21 @@ import { TenantContext } from '../../services/signals/tenant-context.signal';
             <div class="absolute inset-0 login-image-overlay"></div>
 
             <!-- Logo + Content -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
+            <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-white">
               <!-- Logo -->
               <img
                 [src]="logoUrl"
                 alt="SCMS Logo"
-                class="w-32 h-32 mb-10 object-cover rounded-full"
+                class="animate-fade w-32 h-32 mb-10 object-cover rounded-full"
               />
 
               <!-- Title -->
-              <h2 class="text-3xl font-semibold text-center mb-3">
+              <h2 class="animate-fade-05 text-3xl font-semibold text-center mb-3">
                 Smart Clinic Management System
               </h2>
 
               <!-- Description -->
-              <p class="text-lg leading-7 text-center text-primary-300 max-w-md">
+              <p class="animate-fade-1 text-lg leading-7 text-center text-primary-200 max-w-md">
                 Streamlining healthcare management with clinical precision and efficiency.
               </p>
             </div>
@@ -56,10 +55,12 @@ import { TenantContext } from '../../services/signals/tenant-context.signal';
           <!-- ============================================
            RIGHT SIDE
       ============================================= -->
-          <div class="w-full md:w-1/2 bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+          <div
+            class="w-full white-glass-card md:w-1/2 p-4 sm:p-6 lg:p-8 flex flex-col justify-center"
+          >
             <div class="w-full max-w-md mx-auto">
               <!-- Tenant identity -->
-              <div class="flex items-center justify-center gap-3 mb-8">
+              <div class="animate-fade flex items-center  justify-center gap-3 mb-8">
                 <img
                   [src]="tenantContext.tenant()?.logoUrl || logoUrl"
                   [alt]="(tenantContext.tenant()?.name || 'SCMS') + ' logo'"
@@ -226,14 +227,14 @@ import { TenantContext } from '../../services/signals/tenant-context.signal';
        FOOTER
   ============================================= -->
       <footer
-        class="bg-white w-full sticky bottom-0 py-4 px-6 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-3"
+        class="white-glass-card w-full sticky bottom-0 py-4 px-6 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-3"
       >
         <!-- Brand -->
         <div class="text-sm font-medium text-content">SCMS</div>
 
         <!-- Copyright -->
-        <div class="text-sm text-secondary">
-          © 2026 Smart Clinic Management System. All rights reserved.
+        <div class="text-sm text-primary-600">
+          {{ copyright_text }}
         </div>
 
         <!-- Links -->
@@ -279,6 +280,7 @@ export class LoginComponent {
   eyeIcon = faEye;
   eyeSlashIcon = faEyeSlash;
 
+  copyright_text = environment.copyright_text;
   logoUrl = '/assets/images/scms-logo.jpg';
   clinicImageUrl = '/assets/images/clinic-login.jpg';
 
