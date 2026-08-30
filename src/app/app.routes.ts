@@ -11,6 +11,9 @@ import { RoleViewComponent } from './features/roles/role-view';
 import { authGuard, loginGuard } from './guards/auth.guard';
 import { UserSignal } from './services/signals/user.signal';
 import { MainLayoutComponent } from './layout/main-layout';
+import { DepartmentMasterComponent } from './features/departments/department-master';
+import { DepartmentFormComponent } from './features/departments/department-form';
+import { DepartmentViewComponent } from './features/departments/department-view';
 
 export const routes: Routes = [
   {
@@ -33,6 +36,10 @@ export const routes: Routes = [
       { path: 'roles/add', component: RoleFormComponent },
       { path: 'roles/:roleId/edit', component: RoleFormComponent },
       { path: 'roles/:roleId/view', component: RoleViewComponent },
+      { path: 'departments', component: DepartmentMasterComponent },
+      { path: 'departments/add', component: DepartmentFormComponent },
+      { path: 'departments/:departmentId/edit', component: DepartmentFormComponent },
+      { path: 'departments/:departmentId/view', component: DepartmentViewComponent },
     ],
   },
   { path: '**', redirectTo: '/login' },
