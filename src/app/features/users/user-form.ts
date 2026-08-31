@@ -9,9 +9,11 @@ import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { MasterApiService } from '../../library/api/master-api.service';
 import { CreateUserDto, UpdateUserDto, UserDto } from '../../library/models/user.model';
+import { RoleDto } from '../../library/models/role.model';
 
 @Component({
   selector: 'app-user-form',
@@ -25,6 +27,7 @@ import { CreateUserDto, UpdateUserDto, UserDto } from '../../library/models/user
     PasswordModule,
     ToastModule,
     CardModule,
+    MultiSelectModule,
     RouterLink
   ],
   providers: [MessageService],
@@ -78,7 +81,7 @@ import { CreateUserDto, UpdateUserDto, UserDto } from '../../library/models/user
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-2xl shadow-sm border border-outline-light overflow-hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-outline-light overflow-visible">
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-8">
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -177,15 +180,19 @@ import { CreateUserDto, UpdateUserDto, UserDto } from '../../library/models/user
               <label for="roleIds" class="block text-sm font-semibold text-gray-700 mb-1.5">
                 Assigned Roles
               </label>
-              <input
+              <p-multiSelect
                 id="roleIds"
-                type="text"
+                [options]="roles()"
                 formControlName="roleIds"
-                placeholder="e.g. admin, doctor, receptionist"
-                class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow outline-none text-gray-800"
-              />
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select roles"
+                [filter]="true"
+                styleClass="w-full"
+                [style]="{'border-radius': '0.75rem', 'padding': '0.25rem'}"
+              ></p-multiSelect>
               <p class="mt-1.5 text-xs text-gray-500 flex items-center gap-1">
-                <i class="pi pi-info-circle"></i> Separate multiple role IDs with commas.
+                <i class="pi pi-info-circle"></i> Select one or more roles for this user.
               </p>
             </div>
 
@@ -248,6 +255,7 @@ export class UserFormComponent implements OnInit {
   isLoading = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
   userId = signal<string | null>(null);
+  roles = signal<RoleDto[]>([]);
 
   constructor() {
     this.userForm = this.fb.group({
@@ -255,12 +263,14 @@ export class UserFormComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: [''],
       employeeId: [''],
-      roleIds: [''],
+      roleIds: [[]],
       isActive: [true],
     });
   }
 
   ngOnInit(): void {
+    this.loadRoles();
+    
     this.route.paramMap.subscribe((params) => {
       const userId = params.get('userId');
       if (userId) {
@@ -275,6 +285,19 @@ export class UserFormComponent implements OnInit {
       }
     });
   }
+  
+  loadRoles(): void {
+    this.masterApi.getAllRoles().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.roles.set(response.data);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to load roles', error);
+      }
+    });
+  }
 
   loadUser(userId: string): void {
     this.isLoading.set(true);
@@ -286,7 +309,7 @@ export class UserFormComponent implements OnInit {
             username: user.username,
             email: user.email,
             employeeId: user.employeeId || '',
-            roleIds: user.roleIds.join(', '),
+            roleIds: user.roleIds || [],
             isActive: user.isActive,
           });
         } else {
@@ -318,12 +341,7 @@ export class UserFormComponent implements OnInit {
     }
 
     const formValue = this.userForm.value;
-    const roleIdsArray = formValue.roleIds
-      ? formValue.roleIds
-          .split(',')
-          .map((id: string) => id.trim())
-          .filter((id: string) => id)
-      : [];
+    const roleIdsArray = formValue.roleIds || [];
 
     this.isLoading.set(true);
 
