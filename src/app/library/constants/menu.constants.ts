@@ -46,16 +46,22 @@ export const MENU_CONFIG: MenuItem[] = [
     icon: 'pi pi-building',
     children: [
       {
-        label: 'Employees',
-        icon: 'pi pi-briefcase',
-        route: '/employees',
-        permission: 'EMPLOYEE_READ',
-      },
-      {
         label: 'Departments',
         icon: 'pi pi-sitemap',
         route: '/departments',
         permission: 'DEPARTMENT_READ',
+      },
+      {
+        label: 'Specializations',
+        icon: 'pi pi-star',
+        route: '/specializations',
+        permission: 'SPECIALIZATION_READ',
+      },
+      {
+        label: 'Employees',
+        icon: 'pi pi-briefcase',
+        route: '/employees',
+        permission: 'EMPLOYEE_READ',
       },
       { label: 'Pharmacy', icon: 'pi pi-box', route: '/pharmacy', permission: 'PHARMACY_READ' },
     ],

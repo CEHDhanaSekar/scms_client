@@ -11,6 +11,11 @@ import {
   DepartmentDto,
   UpdateDepartmentDto,
 } from '../models/department.model';
+import {
+  CreateSpecializationDto,
+  SpecializationDto,
+  UpdateSpecializationDto,
+} from '../models/specialization.model';
 
 @Injectable({
   providedIn: 'root',
@@ -92,5 +97,35 @@ export class MasterApiService {
 
   deleteDepartment(departmentId: string): Observable<ApiResponse<boolean>> {
     return this.http.deleteData(environment.serverUrlV1, `Department/${departmentId}`);
+  }
+
+  // Specialization
+
+  getAllSpecialization(): Observable<ApiResponse<SpecializationDto[]>> {
+    return this.http.getData(environment.serverUrlV1, 'Specialization');
+  }
+
+  getSpecializationById(specializationId: string): Observable<ApiResponse<SpecializationDto>> {
+    return this.http.getData(environment.serverUrlV1, `Specialization/${specializationId}`);
+  }
+
+  createSpecialization(
+    specialization: CreateSpecializationDto,
+  ): Observable<ApiResponse<SpecializationDto>> {
+    return this.http.postData(environment.serverUrlV1, 'Specialization', specialization);
+  }
+
+  updateSpecialization(
+    specialization: UpdateSpecializationDto,
+  ): Observable<ApiResponse<SpecializationDto>> {
+    return this.http.putData(
+      environment.serverUrlV1,
+      `Specialization/${specialization.id}`,
+      specialization,
+    );
+  }
+
+  deleteSpecialization(specialization: string): Observable<ApiResponse<boolean>> {
+    return this.http.deleteData(environment.serverUrlV1, `Specialization/${specialization}`);
   }
 }
