@@ -15,8 +15,11 @@ import { DepartmentMasterComponent } from './features/departments/department-mas
 import { DepartmentFormComponent } from './features/departments/department-form';
 import { DepartmentViewComponent } from './features/departments/department-view';
 import { SpecializationMasterComponent } from './features/specialization/specialization-master';
+import { EmployeeMasterComponent } from './features/employees/employee-master';
 import { SpecializationFormComponent } from './features/specialization/specialization-form';
 import { SpecializationViewComponent } from './features/specialization/specialization-view';
+import { EmployeeFormComponent } from './features/employees/employee-form';
+import { EmployeeViewComponent } from './features/employees/employee-view';
 
 export const routes: Routes = [
   {
@@ -47,6 +50,10 @@ export const routes: Routes = [
       { path: 'specializations/add', component: SpecializationFormComponent },
       { path: 'specializations/:specializationId/edit', component: SpecializationFormComponent },
       { path: 'specializations/:specializationId/view', component: SpecializationViewComponent },
+      { path: 'employees', component: EmployeeMasterComponent },
+      { path: 'employees/add', component: EmployeeFormComponent },
+      { path: 'employees/:employeeId/edit', component: EmployeeFormComponent },
+      { path: 'employees/:employeeId/view', component: EmployeeViewComponent },
     ],
   },
   { path: '**', redirectTo: '/login' },

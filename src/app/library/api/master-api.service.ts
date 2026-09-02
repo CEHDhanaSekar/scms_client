@@ -16,6 +16,7 @@ import {
   SpecializationDto,
   UpdateSpecializationDto,
 } from '../models/specialization.model';
+import { CreateEmployeeDto, EmployeeDto, UpdateEmployeeDto } from '../models/employee.model';
 
 @Injectable({
   providedIn: 'root',
@@ -127,5 +128,27 @@ export class MasterApiService {
 
   deleteSpecialization(specialization: string): Observable<ApiResponse<boolean>> {
     return this.http.deleteData(environment.serverUrlV1, `Specialization/${specialization}`);
+  }
+
+  // Employee
+
+  getAllEmployees(): Observable<ApiResponse<EmployeeDto[]>> {
+    return this.http.getData(environment.serverUrlV1, 'Employee');
+  }
+
+  getEmployeeById(employeeId: string): Observable<ApiResponse<EmployeeDto>> {
+    return this.http.getData(environment.serverUrlV1, `Employee/${employeeId}`);
+  }
+
+  createEmployee(employee: CreateEmployeeDto): Observable<ApiResponse<EmployeeDto>> {
+    return this.http.postData(environment.serverUrlV1, 'Employee', employee);
+  }
+
+  updateEmployee(employee: UpdateEmployeeDto): Observable<ApiResponse<EmployeeDto>> {
+    return this.http.putData(environment.serverUrlV1, `Employee/${employee.id}`, employee);
+  }
+
+  deleteEmployee(employeeId: string): Observable<ApiResponse<boolean>> {
+    return this.http.deleteData(environment.serverUrlV1, `Employee/${employeeId}`);
   }
 }
