@@ -10,10 +10,12 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { MasterApiService } from '../../library/api/master-api.service';
 import { CreateUserDto, UpdateUserDto, UserDto } from '../../library/models/user.model';
 import { RoleDto } from '../../library/models/role.model';
+import { EmployeeDto } from '../../library/models/employee.model';
 
 @Component({
   selector: 'app-user-form',
@@ -28,15 +30,18 @@ import { RoleDto } from '../../library/models/role.model';
     ToastModule,
     CardModule,
     MultiSelectModule,
-    RouterLink
+    SelectModule,
+    RouterLink,
   ],
   providers: [MessageService],
   template: `
     <div class="p-4 md:p-6 max-w-4xl mx-auto space-y-6">
       <!-- Header & Breadcrumb -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-light">
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-light"
+      >
         <div class="flex items-center gap-4">
-          <button 
+          <button
             type="button"
             (click)="onCancel()"
             class="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
@@ -48,17 +53,24 @@ import { RoleDto } from '../../library/models/role.model';
               {{ isEditMode() ? 'Edit User' : 'Create New User' }}
             </h1>
             <p class="text-sm text-gray-500 mt-1">
-              {{ isEditMode() ? 'Update the details for this account.' : 'Fill in the details to add a new user to the system.' }}
+              {{
+                isEditMode()
+                  ? 'Update the details for this account.'
+                  : 'Fill in the details to add a new user to the system.'
+              }}
             </p>
           </div>
         </div>
-        
+
         <div class="flex flex-col items-start md:items-end gap-3">
           <!-- Breadcrumb -->
           <nav class="flex text-sm text-gray-500 font-medium" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
               <li class="inline-flex items-center">
-                <a routerLink="/dashboard" class="inline-flex items-center hover:text-primary-600 transition-colors">
+                <a
+                  routerLink="/dashboard"
+                  class="inline-flex items-center hover:text-primary-600 transition-colors"
+                >
                   <i class="pi pi-home mr-2 text-xs"></i>
                   Dashboard
                 </a>
@@ -66,13 +78,19 @@ import { RoleDto } from '../../library/models/role.model';
               <li>
                 <div class="flex items-center">
                   <i class="pi pi-angle-right text-xs mx-1"></i>
-                  <a routerLink="/users" class="hover:text-primary-600 transition-colors ml-1 md:ml-2">Users</a>
+                  <a
+                    routerLink="/users"
+                    class="hover:text-primary-600 transition-colors ml-1 md:ml-2"
+                    >Users</a
+                  >
                 </div>
               </li>
               <li>
                 <div class="flex items-center">
                   <i class="pi pi-angle-right text-xs mx-1"></i>
-                  <span class="text-gray-800 ml-1 md:ml-2">{{ isEditMode() ? 'Edit' : 'Add' }}</span>
+                  <span class="text-gray-800 ml-1 md:ml-2">{{
+                    isEditMode() ? 'Edit' : 'Add'
+                  }}</span>
                 </div>
               </li>
             </ol>
@@ -83,12 +101,12 @@ import { RoleDto } from '../../library/models/role.model';
       <!-- Form Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-outline-light overflow-visible">
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-8">
-          
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            
             <!-- Username -->
             <div class="col-span-1 md:col-span-2">
-              <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-4">Basic Information</h3>
+              <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-4">
+                Basic Information
+              </h3>
             </div>
 
             <div>
@@ -101,7 +119,10 @@ import { RoleDto } from '../../library/models/role.model';
                 formControlName="username"
                 placeholder="e.g. jdoe123"
                 class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow outline-none text-gray-800"
-                [ngClass]="{'border-red-300 focus:ring-red-500 bg-red-50': userForm.controls['username'].touched && userForm.controls['username'].invalid}"
+                [ngClass]="{
+                  'border-red-300 focus:ring-red-500 bg-red-50':
+                    userForm.controls['username'].touched && userForm.controls['username'].invalid,
+                }"
               />
               @if (userForm.controls['username'].touched && userForm.controls['username'].invalid) {
                 <p class="mt-1.5 text-xs text-red-600 font-medium flex items-center gap-1">
@@ -121,7 +142,10 @@ import { RoleDto } from '../../library/models/role.model';
                 formControlName="email"
                 placeholder="e.g. john@example.com"
                 class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow outline-none text-gray-800"
-                [ngClass]="{'border-red-300 focus:ring-red-500 bg-red-50': userForm.controls['email'].touched && userForm.controls['email'].invalid}"
+                [ngClass]="{
+                  'border-red-300 focus:ring-red-500 bg-red-50':
+                    userForm.controls['email'].touched && userForm.controls['email'].invalid,
+                }"
               />
               @if (userForm.controls['email'].touched && userForm.controls['email'].invalid) {
                 <p class="mt-1.5 text-xs text-red-600 font-medium flex items-center gap-1">
@@ -147,9 +171,15 @@ import { RoleDto } from '../../library/models/role.model';
                   formControlName="password"
                   placeholder="Create a secure password"
                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow outline-none text-gray-800"
-                  [ngClass]="{'border-red-300 focus:ring-red-500 bg-red-50': userForm.controls['password'].touched && userForm.controls['password'].invalid}"
+                  [ngClass]="{
+                    'border-red-300 focus:ring-red-500 bg-red-50':
+                      userForm.controls['password'].touched &&
+                      userForm.controls['password'].invalid,
+                  }"
                 />
-                @if (userForm.controls['password'].touched && userForm.controls['password'].invalid) {
+                @if (
+                  userForm.controls['password'].touched && userForm.controls['password'].invalid
+                ) {
                   <p class="mt-1.5 text-xs text-red-600 font-medium flex items-center gap-1">
                     <i class="pi pi-exclamation-circle text-xs"></i> Password is required.
                   </p>
@@ -157,22 +187,28 @@ import { RoleDto } from '../../library/models/role.model';
               </div>
             }
 
-            <!-- Employee ID -->
-            <div [ngClass]="{'md:col-start-2': !isEditMode()}">
+            <!-- Employee -->
+            <div [ngClass]="{ 'md:col-start-2': !isEditMode() }">
               <label for="employeeId" class="block text-sm font-semibold text-gray-700 mb-1.5">
-                Employee ID <span class="text-gray-400 font-normal">(Optional)</span>
+                Employee <span class="text-gray-400 font-normal">(Optional)</span>
               </label>
-              <input
+              <p-select
                 id="employeeId"
-                type="text"
+                [options]="employeeOptions()"
                 formControlName="employeeId"
-                placeholder="e.g. EMP-001"
-                class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow outline-none text-gray-800"
-              />
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select an employee"
+                [showClear]="true"
+                [filter]="true"
+                styleClass="w-full"
+              ></p-select>
             </div>
 
             <div class="col-span-1 md:col-span-2 mt-4">
-              <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-4">System Settings</h3>
+              <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-4">
+                System Settings
+              </h3>
             </div>
 
             <!-- Role IDs -->
@@ -189,7 +225,7 @@ import { RoleDto } from '../../library/models/role.model';
                 placeholder="Select roles"
                 [filter]="true"
                 styleClass="w-full"
-                [style]="{'border-radius': '0.75rem', 'padding': '0.25rem'}"
+                [style]="{ 'border-radius': '0.75rem', padding: '0.25rem' }"
               ></p-multiSelect>
               <p class="mt-1.5 text-xs text-gray-500 flex items-center gap-1">
                 <i class="pi pi-info-circle"></i> Select one or more roles for this user.
@@ -198,7 +234,9 @@ import { RoleDto } from '../../library/models/role.model';
 
             <!-- Active Status (only for edit mode) -->
             @if (isEditMode()) {
-              <div class="col-span-1 md:col-span-2 flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <div
+                class="col-span-1 md:col-span-2 flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100"
+              >
                 <input
                   id="isActive"
                   type="checkbox"
@@ -256,6 +294,7 @@ export class UserFormComponent implements OnInit {
   isEditMode = signal<boolean>(false);
   userId = signal<string | null>(null);
   roles = signal<RoleDto[]>([]);
+  employeeOptions = signal<{ id: string; name: string }[]>([]);
 
   constructor() {
     this.userForm = this.fb.group({
@@ -270,7 +309,8 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRoles();
-    
+    this.loadEmployees();
+
     this.route.paramMap.subscribe((params) => {
       const userId = params.get('userId');
       if (userId) {
@@ -285,7 +325,29 @@ export class UserFormComponent implements OnInit {
       }
     });
   }
-  
+
+  loadEmployees(): void {
+    this.masterApi.getAllEmployees().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.employeeOptions.set(
+            response.data.map((employee: EmployeeDto) => ({
+              id: employee.id,
+              name: `${employee.firstName} ${employee.lastName}`,
+            })),
+          );
+        }
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error?.error?.message || error?.message || 'Failed to load employees',
+        });
+      },
+    });
+  }
+
   loadRoles(): void {
     this.masterApi.getAllRoles().subscribe({
       next: (response) => {
@@ -295,7 +357,7 @@ export class UserFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load roles', error);
-      }
+      },
     });
   }
 
