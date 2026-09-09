@@ -17,6 +17,7 @@ import {
   UpdateSpecializationDto,
 } from '../models/specialization.model';
 import { CreateEmployeeDto, EmployeeDto, UpdateEmployeeDto } from '../models/employee.model';
+import { MasterValuesDto } from '../models/master-values.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,18 @@ import { CreateEmployeeDto, EmployeeDto, UpdateEmployeeDto } from '../models/emp
 export class MasterApiService {
   private readonly http = inject(CommonHttpService);
 
+  // Master Values
+  getAllMasterValues(): Observable<ApiResponse<MasterValuesDto[]>> {
+    return this.http.getData(environment.serverUrlV1, 'MasterValues');
+  }
+
+  getMasterValuesByType(type: string): Observable<ApiResponse<MasterValuesDto[]>> {
+    return this.http.getData(environment.serverUrlV1, `MasterValues/by-type/${type}`);
+  }
+
+  getMasterValueById(masterValueId: string): Observable<ApiResponse<MasterValuesDto>> {
+    return this.http.getData(environment.serverUrlV1, `MasterValues/${masterValueId}`);
+  }
   // Permissions
 
   getAllPermissions(): Observable<ApiResponse<TenantPermissionDto[]>> {
