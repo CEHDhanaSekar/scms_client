@@ -6,7 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MasterApiService } from '../../library/api/master-api.service';
 import { DepartmentDto } from '../../library/models/department.model';
-import { EmployeeDto, EmployeeType } from '../../library/models/employee.model';
+import { EmployeeDto } from '../../library/models/employee.model';
+import { MasterValuesDto } from '../../library/models/master-values.model';
 import { SpecializationDto } from '../../library/models/specialization.model';
 
 @Component({
@@ -50,7 +51,7 @@ import { SpecializationDto } from '../../library/models/specialization.model';
                 <h2 class="text-xl font-bold text-gray-900">
                   {{ employee()!.firstName }} {{ employee()!.lastName }}
                 </h2>
-                <p class="text-sm text-gray-500">{{ getEmployeeTypeName(employee()!.type) }}</p>
+                <p class="text-sm text-gray-500">{{ getEmployeeTypeName(employee()!.typeId) }}</p>
                 <button
                   (click)="navigateToEditEmployee(employee()!.id)"
                   class="mt-4 bg-blue-50 text-blue-600 hover:bg-blue-100 px-5 py-2.5 rounded-xl font-medium border border-blue-200"
@@ -94,6 +95,7 @@ export class EmployeeViewComponent implements OnInit {
   employee = signal<EmployeeDto | null>(null);
   departments = signal<DepartmentDto[]>([]);
   specializations = signal<SpecializationDto[]>([]);
+  employeeTypes = signal<MasterValuesDto[]>([]);
   isLoading = signal(true);
   details = signal<{ label: string; value: string }[]>([]);
   ngOnInit(): void {
@@ -103,6 +105,10 @@ export class EmployeeViewComponent implements OnInit {
     });
     this.masterApi.getAllSpecialization().subscribe((response) => {
       if (response.success && response.data) this.specializations.set(response.data);
+      this.updateDetails();
+    });
+    this.masterApi.getMasterValuesByType('EmployeeType').subscribe((response) => {
+      if (response.success && response.data) this.employeeTypes.set(response.data);
       this.updateDetails();
     });
     this.route.paramMap.subscribe((params) => {
@@ -133,7 +139,7 @@ export class EmployeeViewComponent implements OnInit {
     this.details.set([
       { label: 'Email', value: employee.email || 'Not provided' },
       { label: 'Phone Number', value: employee.phoneNumber || 'Not provided' },
-      { label: 'Employee Type', value: this.getEmployeeTypeName(employee.type) },
+      { label: 'Employee Type', value: this.getEmployeeTypeName(employee.typeId) },
       {
         label: 'Department',
         value:
@@ -149,8 +155,8 @@ export class EmployeeViewComponent implements OnInit {
       },
     ]);
   }
-  getEmployeeTypeName(type: EmployeeType): string {
-    return EmployeeType[type] || 'Other';
+  getEmployeeTypeName(typeId: string): string {
+    return this.employeeTypes().find((t) => t.id === typeId)?.displayName || 'Other';
   }
   navigateToEditEmployee(id: string): void {
     this.router.navigate(['/employees', id, 'edit']);
