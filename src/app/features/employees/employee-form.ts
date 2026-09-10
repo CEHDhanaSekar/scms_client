@@ -12,9 +12,9 @@ import { MasterApiService } from '../../library/api/master-api.service';
 import { DepartmentDto } from '../../library/models/department.model';
 import {
   CreateEmployeeDto,
-  EmployeeType,
   UpdateEmployeeDto,
 } from '../../library/models/employee.model';
+import { MasterValuesDto } from '../../library/models/master-values.model';
 import { SpecializationDto } from '../../library/models/specialization.model';
 
 @Component({
@@ -115,14 +115,14 @@ import { SpecializationDto } from '../../library/models/specialization.model';
               }
             </div>
             <div>
-              <label for="type" class="block text-sm font-semibold text-gray-700 mb-1.5"
+              <label for="typeId" class="block text-sm font-semibold text-gray-700 mb-1.5"
                 >Employee Type <span class="text-red-500">*</span></label
               ><p-select
-                id="type"
-                [options]="employeeTypes"
-                formControlName="type"
-                optionLabel="label"
-                optionValue="value"
+                id="typeId"
+                [options]="employeeTypes()"
+                formControlName="typeId"
+                optionLabel="displayName"
+                optionValue="id"
                 placeholder="Select type"
                 styleClass="w-full"
               ></p-select>
@@ -191,16 +191,14 @@ export class EmployeeFormComponent implements OnInit {
   employeeId = signal<string | null>(null);
   departments = signal<DepartmentDto[]>([]);
   specializations = signal<SpecializationDto[]>([]);
-  readonly employeeTypes = Object.keys(EmployeeType)
-    .filter((key) => Number.isNaN(Number(key)))
-    .map((label) => ({ label, value: EmployeeType[label as keyof typeof EmployeeType] }));
+  employeeTypes = signal<MasterValuesDto[]>([]);
   constructor() {
     this.employeeForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       phoneNumber: [''],
       email: ['', Validators.email],
-      type: [null, Validators.required],
+      typeId: [null, Validators.required],
       departmentId: [null, Validators.required],
       specializationId: [null],
     });
@@ -222,6 +220,9 @@ export class EmployeeFormComponent implements OnInit {
     });
     this.masterApi.getAllSpecialization().subscribe((response) => {
       if (response.success && response.data) this.specializations.set(response.data);
+    });
+    this.masterApi.getMasterValuesByType('EmployeeType').subscribe((response) => {
+      if (response.success && response.data) this.employeeTypes.set(response.data);
     });
   }
   loadEmployee(id: string): void {

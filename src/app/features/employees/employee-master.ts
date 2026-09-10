@@ -8,7 +8,8 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { MasterApiService } from '../../library/api/master-api.service';
 import { DepartmentDto } from '../../library/models/department.model';
-import { EmployeeDto, EmployeeType } from '../../library/models/employee.model';
+import { EmployeeDto } from '../../library/models/employee.model';
+import { MasterValuesDto } from '../../library/models/master-values.model';
 import { SpecializationDto } from '../../library/models/specialization.model';
 
 @Component({
@@ -105,7 +106,7 @@ import { SpecializationDto } from '../../library/models/specialization.model';
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
                   class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
-                  >{{ getEmployeeTypeName(employee.type) }}</span
+                  >{{ getEmployeeTypeName(employee.typeId) }}</span
                 >
               </td>
               <td class="px-6 py-4 text-sm text-gray-600">
@@ -167,6 +168,7 @@ export class EmployeeMasterComponent implements OnInit {
   employees = signal<EmployeeDto[]>([]);
   departments = signal<DepartmentDto[]>([]);
   specializations = signal<SpecializationDto[]>([]);
+  employeeTypes = signal<MasterValuesDto[]>([]);
   isLoading = signal(false);
   ngOnInit(): void {
     this.loadEmployees();
@@ -175,6 +177,9 @@ export class EmployeeMasterComponent implements OnInit {
     });
     this.masterApi.getAllSpecialization().subscribe((response) => {
       if (response.success && response.data) this.specializations.set(response.data);
+    });
+    this.masterApi.getMasterValuesByType('EmployeeType').subscribe((response) => {
+      if (response.success && response.data) this.employeeTypes.set(response.data);
     });
   }
   loadEmployees(): void {
@@ -199,8 +204,8 @@ export class EmployeeMasterComponent implements OnInit {
       ? this.specializations().find((specialization) => specialization.id === id)?.name || 'Unknown'
       : 'None';
   }
-  getEmployeeTypeName(type: EmployeeType): string {
-    return EmployeeType[type] || 'Other';
+  getEmployeeTypeName(typeId: string): string {
+    return this.employeeTypes().find((t) => t.id === typeId)?.displayName || 'Other';
   }
   navigateToAddEmployee(): void {
     this.router.navigate(['/employees/add']);
